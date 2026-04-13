@@ -1,6 +1,6 @@
 {
   "name": "@kirha/cli",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Official command-line interface for the Kirha API. LLM-friendly, JSON-first.",
   "type": "module",
   "bin": {

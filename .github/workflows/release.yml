@@ -102,9 +102,9 @@ jobs:
         run: test -f dist/kirha.js
 
       - name: Dry run
-        run: npm publish --dry-run --access public
+        run: npm publish --dry-run --access public --ignore-scripts
 
       - name: Publish
-        run: npm publish --access public
+        run: npm publish --access public --ignore-scripts
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
