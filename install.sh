@@ -4,9 +4,10 @@
 #   curl -fsSL https://raw.githubusercontent.com/kirha-ai/kirha-cli/main/install.sh | sh
 #
 # Environment variables:
-#   KIRHA_INSTALL_DIR  install root (default: $HOME/.kirha)
-#   KIRHA_VERSION      pin a specific version (default: latest GitHub release tag)
-#   KIRHA_SKIP_VERIFY  set to "1" to skip the SHA256 checksum check (not recommended)
+#   KIRHA_INSTALL_DIR     install root (default: $HOME/.kirha)
+#   KIRHA_VERSION         pin a specific version (default: latest GitHub release tag)
+#   KIRHA_SKIP_VERIFY     set to "1" to skip the SHA256 checksum check (not recommended)
+#   KIRHA_NO_MODIFY_PATH  set to "1" to skip auto-adding the install dir to your shell PATH
 
 set -eu
 
@@ -104,16 +105,69 @@ info ""
 info "kirha $KIRHA_VERSION installed."
 info ""
 
+add_to_path() {
+  PATH_RC_FILE=""
+  shell_name=$(basename "${SHELL:-}")
+  case "$shell_name" in
+    zsh)
+      PATH_RC_FILE="$HOME/.zshrc"
+      PATH_LINE="export PATH=\"$BIN_DIR:\$PATH\""
+      ;;
+    bash)
+      if [ -f "$HOME/.bash_profile" ]; then
+        PATH_RC_FILE="$HOME/.bash_profile"
+      else
+        PATH_RC_FILE="$HOME/.bashrc"
+      fi
+      PATH_LINE="export PATH=\"$BIN_DIR:\$PATH\""
+      ;;
+    fish)
+      PATH_RC_FILE="$HOME/.config/fish/config.fish"
+      PATH_LINE="set -gx PATH \"$BIN_DIR\" \$PATH"
+      ;;
+    *)
+      return 1
+      ;;
+  esac
+
+  PATH_MARKER="# Added by kirha-cli installer"
+  if [ -f "$PATH_RC_FILE" ] && grep -Fq "$PATH_MARKER" "$PATH_RC_FILE"; then
+    return 0
+  fi
+
+  mkdir -p "$(dirname "$PATH_RC_FILE")"
+  {
+    printf '\n%s\n' "$PATH_MARKER"
+    printf '%s\n' "$PATH_LINE"
+  } >> "$PATH_RC_FILE"
+  return 0
+}
+
 case ":$PATH:" in
   *":$BIN_DIR:"*)
     info "Run: kirha --help"
     ;;
   *)
-    info "Add $BIN_DIR to your PATH, e.g.:"
-    info ""
-    info "  echo 'export PATH=\"$BIN_DIR:\$PATH\"' >> ~/.zshrc"
-    info "  echo 'export PATH=\"$BIN_DIR:\$PATH\"' >> ~/.bashrc"
-    info ""
-    info "Then: kirha --help"
+    if [ "${KIRHA_NO_MODIFY_PATH:-0}" = "1" ]; then
+      info "Add $BIN_DIR to your PATH, e.g.:"
+      info ""
+      info "  echo 'export PATH=\"$BIN_DIR:\$PATH\"' >> ~/.zshrc"
+      info "  echo 'export PATH=\"$BIN_DIR:\$PATH\"' >> ~/.bashrc"
+      info ""
+      info "Then: kirha --help"
+    elif add_to_path; then
+      info "Added $BIN_DIR to your PATH in $PATH_RC_FILE"
+      info ""
+      info "Open a new terminal, or run:"
+      info "  source $PATH_RC_FILE"
+      info ""
+      info "Then: kirha --help"
+    else
+      info "Could not detect your shell. Add $BIN_DIR to your PATH manually:"
+      info ""
+      info "  export PATH=\"$BIN_DIR:\$PATH\""
+      info ""
+      info "Then: kirha --help"
+    fi
     ;;
 esac
