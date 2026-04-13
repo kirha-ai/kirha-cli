@@ -2,6 +2,7 @@ import { Command, CommanderError } from "commander";
 import pkg from "../package.json" with { type: "json" };
 import { registerAuth } from "./commands/auth.ts";
 import { registerConfig } from "./commands/config.ts";
+import { registerMcp } from "./commands/mcp.ts";
 import { registerPlan } from "./commands/plan.ts";
 import { registerSearch } from "./commands/search.ts";
 import { registerTask } from "./commands/task.ts";
@@ -33,6 +34,7 @@ export async function run(argv: string[]): Promise<void> {
   registerPlan(program);
   registerTask(program);
   registerTools(program);
+  registerMcp(program);
   registerUpgrade(program);
 
   if (argv.length <= 2) {

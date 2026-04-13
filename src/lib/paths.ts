@@ -13,3 +13,11 @@ export function authFile(): string {
 export function configFile(): string {
   return join(configDir(), "config.json");
 }
+
+export function kirhaHome(): string {
+  return process.env.KIRHA_INSTALL_DIR ?? join(homedir(), ".kirha");
+}
+
+export function cacheDir(): string {
+  return join(kirhaHome(), "cache");
+}

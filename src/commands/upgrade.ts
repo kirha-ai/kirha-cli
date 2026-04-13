@@ -1,16 +1,19 @@
-import { createHash } from "node:crypto";
 import { mkdtempSync, renameSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import type { Command } from "commander";
 import pkg from "../../package.json" with { type: "json" };
+import {
+  assertChecksum,
+  DOWNLOAD_TIMEOUT_MS,
+  fetchOk,
+  METADATA_TIMEOUT_MS,
+} from "../lib/download.ts";
 import { CliError } from "../lib/errors.ts";
 import { emit } from "../lib/output.ts";
 
 const REPO = "kirha-ai/kirha-cli";
 const RELEASES_API = `https://api.github.com/repos/${REPO}/releases/latest`;
-const METADATA_TIMEOUT_MS = 10_000;
-const DOWNLOAD_TIMEOUT_MS = 120_000;
 const TAG_PATTERN = /^v?\d+\.\d+\.\d+/;
 
 type InstallMethod = "binary" | "npm";
@@ -59,25 +62,10 @@ function compareVersions(a: string, b: string): number {
   return 0;
 }
 
-async function fetchOk(url: string, timeoutMs: number): Promise<Response> {
-  let response: Response;
-  try {
-    response = await fetch(url, {
-      headers: { Accept: "application/vnd.github+json" },
-      signal: AbortSignal.timeout(timeoutMs),
-    });
-  } catch (err) {
-    const message = (err as Error).message || String(err);
-    throw new CliError("NETWORK", `Failed to reach ${url}: ${message}`);
-  }
-  if (!response.ok) {
-    throw new CliError("NETWORK", `HTTP ${response.status} from ${url}`);
-  }
-  return response;
-}
-
 async function fetchLatestTag(): Promise<string> {
-  const response = await fetchOk(RELEASES_API, METADATA_TIMEOUT_MS);
+  const response = await fetchOk(RELEASES_API, METADATA_TIMEOUT_MS, {
+    headers: { Accept: "application/vnd.github+json" },
+  });
   const data = (await response.json()) as { tag_name?: string };
   if (!data.tag_name || !TAG_PATTERN.test(data.tag_name)) {
     throw new CliError(
@@ -113,14 +101,7 @@ async function downloadAndVerify({ tag, assetName }: ReleaseAsset): Promise<Buff
     throw new CliError("INTERNAL", `No checksum entry for ${assetName} in checksums.txt`);
   }
 
-  const actual = createHash("sha256").update(binaryBuffer).digest("hex");
-  if (actual !== expected) {
-    throw new CliError(
-      "INTERNAL",
-      `Checksum mismatch for ${assetName}: expected ${expected}, got ${actual}`,
-    );
-  }
-
+  assertChecksum(binaryBuffer, expected, assetName);
   return binaryBuffer;
 }
 

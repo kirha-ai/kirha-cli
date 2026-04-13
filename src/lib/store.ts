@@ -18,9 +18,13 @@ export function readJson<T>(path: string): T | null {
 }
 
 export function writeJson(path: string, data: unknown, mode = 0o600): void {
-  mkdirSync(dirname(path), { recursive: true, mode: 0o700 });
+  ensureDir(dirname(path), 0o700);
   writeFileSync(path, `${JSON.stringify(data, null, 2)}\n`, { mode });
   chmodSync(path, mode);
+}
+
+export function ensureDir(path: string, mode = 0o755): void {
+  mkdirSync(path, { recursive: true, mode });
 }
 
 export function removeFile(path: string): void {

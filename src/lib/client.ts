@@ -13,8 +13,16 @@ export interface ResolvedContext {
   client: KirhaApi;
 }
 
+export function resolveApiKey(opts: GlobalOptions, override?: string): string | null {
+  return override ?? opts.apiKey ?? readAuth()?.apiKey ?? process.env.KIRHA_API_KEY ?? null;
+}
+
+export function resolveVertical(opts: GlobalOptions): string | undefined {
+  return opts.vertical ?? readConfig().vertical ?? process.env.KIRHA_VERTICAL;
+}
+
 export function buildClient(opts: GlobalOptions): ResolvedContext {
-  const apiKey = opts.apiKey ?? readAuth()?.apiKey ?? process.env.KIRHA_API_KEY;
+  const apiKey = resolveApiKey(opts);
   if (!apiKey) {
     throw new CliError(
       "AUTH_REQUIRED",
@@ -22,7 +30,6 @@ export function buildClient(opts: GlobalOptions): ResolvedContext {
     );
   }
 
-  const vertical = opts.vertical ?? readConfig().vertical ?? process.env.KIRHA_VERTICAL;
-
+  const vertical = resolveVertical(opts);
   return { vertical, client: new KirhaApi({ apiKey, vertical }) };
 }
