@@ -147,6 +147,23 @@ Errors come out on stderr in a stable shape:
 
 Exit codes are predictable: `0` for success, `2` for bad usage, `3` for auth issues, `4` for rate limits, `5` for network errors, `6` for an expired plan.
 
+## Wire Kirha into your AI coding tools
+
+Install the Kirha MCP server into Claude Code, Codex, OpenCode, Gemini CLI, or Droid with one command:
+
+```bash
+kirha mcp install            # interactive picker, pick one or more with space/enter
+kirha mcp install --client claudecode
+kirha mcp install --client claudecode,codex
+kirha mcp install --client all
+
+kirha mcp update --client claudecode         # re-sync your current API key to a client
+kirha mcp remove --client claudecode         # remove the server entry
+kirha mcp show   --client claudecode         # show the current configuration
+```
+
+Your API key is pulled automatically from `kirha auth login`. Pass `--key <apiKey>` if you want to override it for a single command, or `--dry-run` to see what would change without touching anything.
+
 ## Upgrade
 
 ```bash
