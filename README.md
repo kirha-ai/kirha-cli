@@ -147,6 +147,15 @@ Errors come out on stderr in a stable shape:
 
 Exit codes are predictable: `0` for success, `2` for bad usage, `3` for auth issues, `4` for rate limits, `5` for network errors, `6` for an expired plan.
 
+## Upgrade
+
+```bash
+kirha upgrade           # download and install the latest version
+kirha upgrade --check   # just print whether a newer version exists
+```
+
+If you installed via `curl`, `kirha upgrade` self-replaces the binary at `~/.kirha/bin/kirha` after verifying its SHA256 checksum. If you installed via npm, it prints the right command for you to run (`npm install -g @kirha/cli@latest`).
+
 ## Uninstall
 
 If you installed via the curl script:

@@ -6,7 +6,10 @@ import { registerPlan } from "./commands/plan.ts";
 import { registerSearch } from "./commands/search.ts";
 import { registerTask } from "./commands/task.ts";
 import { registerTools } from "./commands/tools.ts";
+import { registerUpgrade } from "./commands/upgrade.ts";
 import { fail } from "./lib/output.ts";
+
+const HELP_CODES = new Set(["commander.help", "commander.helpDisplayed", "commander.version"]);
 
 export async function run(argv: string[]): Promise<void> {
   const program = new Command();
@@ -30,12 +33,18 @@ export async function run(argv: string[]): Promise<void> {
   registerPlan(program);
   registerTask(program);
   registerTools(program);
+  registerUpgrade(program);
+
+  if (argv.length <= 2) {
+    program.outputHelp();
+    return;
+  }
 
   try {
     await program.parseAsync(argv);
   } catch (err) {
     if (err instanceof CommanderError) {
-      if (err.exitCode === 0) process.exit(0);
+      if (err.exitCode === 0 || HELP_CODES.has(err.code)) process.exit(0);
       process.stderr.write(
         `${JSON.stringify({ error: { code: "USAGE", message: err.message } })}\n`,
       );
