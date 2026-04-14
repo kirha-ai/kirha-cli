@@ -8,7 +8,7 @@
         "@biomejs/biome": "2.3.10",
         "@types/bun": "^1.3.12",
         "commander": "^12.1.0",
-        "kirha": "^0.1.3",
+        "kirha": "0.1.4",
         "lint-staged": "^16.4.0",
         "simple-git-hooks": "^2.13.1",
         "typescript": "^5.0.0",
@@ -68,7 +68,7 @@
 
     "json5": ["json5@2.2.3", "", { "bin": { "json5": "lib/cli.js" } }, "sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg=="],
 
-    "kirha": ["kirha@0.1.3", "", { "dependencies": { "@kirha/planner": "^0.1.0", "zod": "^3.24.0" }, "peerDependencies": { "typescript": "^5" } }, "sha512-tUup5kyl8s4wliZQTbK/GUA718i94vOfxN7HZHjGKWi8PV83/LYq/WmpztO0fyIcZU0nf8StQevWFvIm53z4oA=="],
+    "kirha": ["kirha@0.1.4", "", { "dependencies": { "@kirha/planner": "^0.1.0", "zod": "^3.24.0" }, "peerDependencies": { "typescript": "^5" } }, "sha512-MA2KR5LuwPwiZKOAckRt4X+T2oiBHgEvNE0BR5PLFIl4q2giSJeLvTCMYkisl3aoY4kzVhqqFvxAp6PKmQNz1Q=="],
 
     "lint-staged": ["lint-staged@16.4.0", "", { "dependencies": { "commander": "^14.0.3", "listr2": "^9.0.5", "picomatch": "^4.0.3", "string-argv": "^0.3.2", "tinyexec": "^1.0.4", "yaml": "^2.8.2" }, "bin": { "lint-staged": "bin/lint-staged.js" } }, "sha512-lBWt8hujh/Cjysw5GYVmZpFHXDCgZzhrOm8vbcUdobADZNOK/bRshr2kM3DfgrrtR1DQhfupW9gnIXOfiFi+bw=="],
 

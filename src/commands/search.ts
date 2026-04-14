@@ -1,8 +1,13 @@
 import type { Command } from "commander";
+import type { PlanningRuntime } from "kirha";
 import { buildClient, type GlobalOptions } from "../lib/client.ts";
 import {
+  DEFAULT_PLANNING_RUNTIME,
   DEFAULT_SUMMARIZATION_MODEL,
+  isPlanningRuntime,
   isSummarizationModel,
+  PLANNING_RUNTIMES,
+  readConfig,
   SUMMARIZATION_MODELS,
   type SummarizationModel,
 } from "../lib/config.ts";
@@ -15,6 +20,7 @@ interface SearchOptions {
   summarization?: SummarizationConfig;
   includeData?: boolean;
   includePlanning?: boolean;
+  planningRuntime?: PlanningRuntime;
 }
 
 interface SearchFlags {
@@ -22,6 +28,19 @@ interface SearchFlags {
   instruction?: string;
   noData?: boolean;
   includePlanning?: boolean;
+  runtime?: string;
+}
+
+function resolveRuntime(flag: string | undefined): PlanningRuntime {
+  const value =
+    flag ?? readConfig().runtime ?? process.env.KIRHA_RUNTIME ?? DEFAULT_PLANNING_RUNTIME;
+  if (!isPlanningRuntime(value)) {
+    throw new CliError(
+      "USAGE",
+      `Invalid runtime '${value}'. Allowed: ${PLANNING_RUNTIMES.join(", ")}`,
+    );
+  }
+  return value;
 }
 
 function resolveModel(value: string | true): SummarizationModel {
@@ -57,6 +76,10 @@ export function registerSearch(program: Command): void {
     .option("--instruction <text>", "Summarization instruction")
     .option("--no-data", "Exclude raw data from response")
     .option("--include-planning", "Include planning info in response")
+    .option(
+      "--runtime <runtime>",
+      `Planning runtime (${PLANNING_RUNTIMES.join(" | ")}, default: ${DEFAULT_PLANNING_RUNTIME})`,
+    )
     .action(async (query: string | undefined, flags: SearchFlags, cmd: Command) => {
       const globals = cmd.optsWithGlobals() as GlobalOptions;
       const text = await resolveQuery(query);
@@ -66,6 +89,7 @@ export function registerSearch(program: Command): void {
         summarization: buildSummarization(flags),
         includeData: flags.noData ? false : undefined,
         includePlanning: flags.includePlanning,
+        planningRuntime: resolveRuntime(flags.runtime),
       };
 
       const result = await client.search(text, options);
