@@ -1,7 +1,7 @@
 #!/bin/sh
 # Kirha CLI installer.
 #
-#   curl -fsSL https://raw.githubusercontent.com/kirha-ai/kirha-cli/main/install.sh | sh
+#   curl -fsSL https://cli.kirha.com/install.sh | sh
 #
 # Environment variables:
 #   KIRHA_INSTALL_DIR     install root (default: $HOME/.kirha)

@@ -31,7 +31,7 @@ Anything you can do with the SDK you can do here: search, run research tasks, pr
 The fastest way, no Node required:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/kirha-ai/kirha-cli/main/install.sh | sh
+curl -fsSL https://cli.kirha.com/install.sh | sh
 ```
 
 That puts a single binary at `~/.kirha/bin/kirha`. Add it to your `PATH` and you're done.
