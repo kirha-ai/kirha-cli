@@ -88,7 +88,12 @@ kirha search "..." --summarize kirha
 
 # Custom summary instructions
 kirha search "..." --summarize --instruction "Format as a markdown table"
+
+# Pick a planning runtime (default: fast)
+kirha search "..." --runtime standard         # standard | fast | deterministic
 ```
+
+The planning runtime controls how Kirha plans your query. `fast` is the default and is what you want most of the time. Save a different default with `kirha config set runtime standard`, or set `KIRHA_RUNTIME` in your env.
 
 **Preview a query before running it.** `plan create` shows you the steps Kirha will take and the estimated credit cost — useful before kicking off something expensive. When you're happy, `plan exec` runs the exact plan you previewed:
 
@@ -121,6 +126,16 @@ kirha task result tsk_abc123    # fetch the final result
 kirha tools list
 kirha tools run zerion_getEthereumWalletProfitAndLoss \
   --input '{"currency":"usd","ethereumAddress":"0x..."}'
+```
+
+**Browse what Kirha offers** — verticals, providers, and the tools they expose. `discovery` prints markdown straight from [discovery.kirha.com](https://discovery.kirha.com), so it's just as useful for you as it is for an LLM piping it around:
+
+```bash
+kirha discovery home                    # overview
+kirha discovery verticals list          # every vertical
+kirha discovery verticals get crypto    # details for one
+kirha discovery providers list          # every provider
+kirha discovery providers get zerion    # details for one
 ```
 
 You can pipe queries in too, which is handy in scripts:
