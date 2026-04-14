@@ -6,6 +6,7 @@ import { registerDiscovery } from "./commands/discovery.ts";
 import { registerMcp } from "./commands/mcp.ts";
 import { registerPlan } from "./commands/plan.ts";
 import { registerSearch } from "./commands/search.ts";
+import { registerSkills } from "./commands/skills.ts";
 import { registerTask } from "./commands/task.ts";
 import { registerTools } from "./commands/tools.ts";
 import { registerUpgrade } from "./commands/upgrade.ts";
@@ -37,6 +38,7 @@ export async function run(argv: string[]): Promise<void> {
   registerTask(program);
   registerTools(program);
   registerMcp(program);
+  registerSkills(program);
   registerUpgrade(program);
 
   if (argv.length <= 2) {

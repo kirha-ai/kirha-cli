@@ -1,0 +1,141 @@
+# Kirha CLI Setup Guide for Agents
+
+You are an AI agent helping a user install, update, or configure the Kirha CLI. Follow these steps in order. Each step is idempotent, so re-running the whole guide on an already-configured machine is safe. Report progress to the user as you go.
+
+All Kirha CLI commands output JSON on stdout. Parse it to decide what to do next instead of matching on text or exit codes.
+
+## Step 1: Install or upgrade the CLI
+
+Check whether `kirha` is already installed:
+
+    kirha --version
+
+### If that command is NOT found
+
+Install it:
+
+    curl -fsSL https://cli.kirha.com/install.sh | sh
+
+This drops a binary at `~/.kirha/bin/kirha` and adds that directory to the user's shell rc file. The current shell session may not see it on PATH yet. For the rest of this setup, use the absolute path `~/.kirha/bin/kirha`. Tell the user to open a new terminal (or run `exec $SHELL`) afterward so `kirha` is available globally.
+
+Then re-run `kirha --version` to confirm.
+
+### If `kirha --version` succeeded
+
+The CLI is already installed. Check for a newer version:
+
+    kirha upgrade --check
+
+This returns JSON like `{"current":"0.4.1","latest":"0.5.0","updateAvailable":true,"method":"binary"}`.
+
+- If `updateAvailable` is `true`: run `kirha upgrade`. It handles binary installs automatically. For npm installs it prints an `instruction` field (for example `npm install -g @kirha/cli@latest`) that the user should run.
+- If `updateAvailable` is `false`: nothing to do, continue.
+
+## Step 2: Install the Kirha skill for yourself
+
+Install the Kirha skill so you can query Kirha directly in future sessions. This step does not need authentication and is idempotent with `--yes`, so re-running it just updates to the latest skill version. Do this before asking the user for a key, so all the unattended work is finished first.
+
+Identify which agent you are and pass the matching id to `--agent`. Here is the full list of supported ids from skills.sh:
+
+- `adal`
+- `amp`
+- `antigravity`
+- `augment`
+- `bob`
+- `claude-code`
+- `cline`
+- `codebuddy`
+- `codex`
+- `command-code`
+- `continue`
+- `cortex`
+- `crush`
+- `cursor`
+- `deepagents`
+- `droid`
+- `firebender`
+- `gemini-cli`
+- `github-copilot`
+- `goose`
+- `iflow-cli`
+- `junie`
+- `kilo`
+- `kimi-cli`
+- `kiro-cli`
+- `kode`
+- `mcpjam`
+- `mistral-vibe`
+- `mux`
+- `neovate`
+- `opencode`
+- `openclaw`
+- `openhands`
+- `pi`
+- `pochi`
+- `qoder`
+- `qwen-code`
+- `replit`
+- `roo`
+- `trae`
+- `trae-cn`
+- `universal`
+- `windsurf`
+- `zencoder`
+
+Run (replace `<agent-id>` with the one that matches you):
+
+    kirha skills install --agent <agent-id> --yes
+
+If you are not sure which agent you are, omit `--agent` and let the installer auto-detect:
+
+    kirha skills install --yes
+
+## Step 3: Check authentication
+
+Run:
+
+    kirha auth status
+
+This returns JSON like `{"authenticated":true,"source":"file"}` or `{"authenticated":false,"source":null}`.
+
+- If `authenticated` is `true`: skip to Step 4.
+- If `authenticated` is `false`: continue below.
+
+### Authenticating (only if needed)
+
+The user needs a free Kirha account and an API key. Tell the user clearly:
+
+> To use Kirha you need a free account and an API key.
+>
+> 1. Sign up or log in at https://app.kirha.com/auth/register
+> 2. Create an API key from your dashboard
+> 3. Paste the key back here when you are ready.
+
+Wait for the user to hand you the key, then run:
+
+    kirha auth login --api-key <KEY>
+
+Re-run `kirha auth status` to confirm `authenticated` is `true` before moving on.
+
+## Step 4: Verify
+
+Run a small test query to confirm everything works end-to-end:
+
+    kirha search "latest bitcoin price"
+
+If it returns results, setup is complete. If it returns an auth error, the stored key may be invalid. Go back to Step 3 and re-authenticate with a fresh key.
+
+## Troubleshooting
+
+- **`command not found: kirha`** right after install. The installer updated the shell rc file but the current shell hasn't reloaded. Use the absolute path `~/.kirha/bin/kirha` or run `exec $SHELL`.
+- **`npx not found`** during `kirha skills install`. The user needs Node.js (https://nodejs.org). As a fallback, clone https://github.com/kirha-ai/kirha-skill and copy the skill directory into the agent's skills folder manually.
+- **Auth errors after `kirha auth login`**. The key may be revoked, expired, or for the wrong environment. Ask the user to generate a new one from their dashboard at https://app.kirha.com and re-run `kirha auth login --api-key <KEY>`.
+- **`kirha upgrade` says permission denied**. The binary is in a protected directory. Ask the user to re-run the curl install script, which handles permissions correctly.
+
+## Reference
+
+- Install script: https://cli.kirha.com/install.sh
+- This guide: https://cli.kirha.com/llms.txt
+- CLI source: https://github.com/kirha-ai/kirha-cli
+- Skill source: https://github.com/kirha-ai/kirha-skill
+- Skills ecosystem: https://skills.sh
