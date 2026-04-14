@@ -21,36 +21,32 @@
 Run [Kirha](https://kirha.com) from your terminal.
 
 ```bash
-$ kirha search "Who's the largest USDC holder on Base?"
+curl -fsSL https://cli.kirha.com/install.sh | sh
 ```
+
+> [!TIP]
+> **Let your AI coding agent do the setup for you.** Tell it:
+>
+> > *Fetch https://cli.kirha.com/llms.txt and follow it.*
+>
+> It will install the CLI, wire up the Kirha skill in your editor, and walk you through creating an API key — all from inside your existing agent session.
 
 Anything you can do with the SDK you can do here: search, run research tasks, preview plans, call individual tools. From your shell, in scripts, or wired into whatever you're building.
 
 ## Install
 
-The fastest way, no Node required:
+The curl command at the top drops a single binary at `~/.kirha/bin/kirha` and adds it to your `PATH`. Prefer something else?
 
 ```bash
-curl -fsSL https://cli.kirha.com/install.sh | sh
+npm install -g @kirha/cli       # via npm
+npx @kirha/cli search "..."     # one-off, no install
 ```
 
-That puts a single binary at `~/.kirha/bin/kirha`. Add it to your `PATH` and you're done.
+Once the `kirha` command is on your `PATH`, finish setup:
 
-If you'd rather use npm:
+### 1. Authenticate
 
-```bash
-npm install -g @kirha/cli
-```
-
-Or run it once without installing anything:
-
-```bash
-npx @kirha/cli search "..."
-```
-
-## Get an API key
-
-Grab one from [app.kirha.com](https://app.kirha.com/auth/register), then save it locally:
+Grab a key from [app.kirha.com](https://app.kirha.com/auth/register), then save it locally:
 
 ```bash
 kirha auth login --api-key sk-...
@@ -58,7 +54,19 @@ kirha auth login --api-key sk-...
 
 Your key lives in `~/.config/kirha/auth.json` and only your user can read it. If you'd rather not store it, you can pass `--api-key` per call or set `KIRHA_API_KEY` in your env. The CLI checks them in this order: `--api-key` flag, then the file, then the env var.
 
-## First search
+### 2. Install the Kirha skill in your editor (optional)
+
+If you're using Claude Code, Cursor, Codex, Cline, or another agent with skill support, install the Kirha skill so your agent can query Kirha directly inside your sessions:
+
+```bash
+kirha skills install                              # auto-detect installed agents
+kirha skills install --agent claude-code --yes    # target a specific agent
+kirha skills install --agent claude-code,cursor   # several at once
+```
+
+Valid agent ids come from [skills.sh](https://skills.sh) — anything listed there works. This wraps `npx skills add kirha-ai/kirha-skill`, so you need Node available.
+
+### 3. Run your first search
 
 ```bash
 kirha search "What's the largest USDC holder on Base?" --vertical crypto
