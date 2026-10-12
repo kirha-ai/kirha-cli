@@ -5,11 +5,12 @@ import { CliError } from "./errors.ts";
 
 export interface GlobalOptions {
   apiKey?: string;
+  focus?: string;
   vertical?: string;
 }
 
 export interface ResolvedContext {
-  vertical?: string;
+  focus?: string;
   client: KirhaApi;
 }
 
@@ -17,8 +18,16 @@ export function resolveApiKey(opts: GlobalOptions, override?: string): string | 
   return override ?? opts.apiKey ?? readAuth()?.apiKey ?? process.env.KIRHA_API_KEY ?? null;
 }
 
-export function resolveVertical(opts: GlobalOptions): string | undefined {
-  return opts.vertical ?? readConfig().vertical ?? process.env.KIRHA_VERTICAL;
+export function resolveFocus(opts: GlobalOptions): string | undefined {
+  const config = readConfig();
+  return (
+    opts.focus ??
+    opts.vertical ??
+    config.focus ??
+    config.vertical ??
+    process.env.KIRHA_FOCUS ??
+    process.env.KIRHA_VERTICAL
+  );
 }
 
 export function buildClient(opts: GlobalOptions): ResolvedContext {
@@ -30,6 +39,6 @@ export function buildClient(opts: GlobalOptions): ResolvedContext {
     );
   }
 
-  const vertical = resolveVertical(opts);
-  return { vertical, client: new KirhaApi({ apiKey, vertical }) };
+  const focus = resolveFocus(opts);
+  return { focus, client: new KirhaApi({ apiKey, focus }) };
 }

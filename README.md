@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./assets/banner.png" alt="Kirha CLI" />
+  <img src="./assets/banner.png" alt="KIRHA CLI" />
 </p>
 
 <p align="center">
@@ -9,21 +9,21 @@
 </p>
 
 <p align="center">
-  <a href="https://kirha.com"><b>🦋 Kirha</b></a> &bull;
+  <a href="https://kirha.com"><b>🦋 KIRHA</b></a> &bull;
   <a href="https://docs.kirha.com"><b>📚 Documentation</b></a> &bull;
   <a href="https://app.kirha.com/auth/register"><b>🔑 Get an API key</b></a>
 </p>
 
 ---
 
-# Kirha CLI
+# KIRHA CLI
 
-Run [Kirha](https://kirha.com) from your terminal.
+Run [KIRHA](https://kirha.com) from your terminal.
 
 ```bash
 curl -fsSL https://cli.kirha.com/install.sh | sh
 
-# Login with your api apiKey
+# Log in with your API key
 kirha auth login
 ```
 
@@ -32,9 +32,9 @@ kirha auth login
 >
 > > *Fetch https://cli.kirha.com/llms.txt and follow it.*
 >
-> It'll install the CLI, set up the Kirha skill in your editor, and help you get an API key. All without leaving your agent session.
+> It'll install the CLI, set up the KIRHA skill in your editor, and help you get an API key. All without leaving your agent session.
 
-Anything you can do with the SDK you can do here: search, run research tasks, preview plans, call individual tools. From your shell, in scripts, or wired into whatever you're building.
+Anything you can do with the SDK you can do here: search, preview plans, call individual tools. From your shell, in scripts, or wired into whatever you're building.
 
 ## Install
 
@@ -49,7 +49,7 @@ Once the `kirha` command is on your `PATH`, finish setup:
 
 ### 1. Authenticate
 
-Grab a key from [app.kirha.com](https://app.kirha.com/auth/register), then save it locally:
+Create a key at [app.kirha.com/api-keys](https://app.kirha.com/api-keys), then save it locally:
 
 ```bash
 kirha auth login --api-key sk-...
@@ -57,9 +57,9 @@ kirha auth login --api-key sk-...
 
 Your key lives in `~/.config/kirha/auth.json` and only your user can read it. If you'd rather not store it, you can pass `--api-key` per call or set `KIRHA_API_KEY` in your env. The CLI checks them in this order: `--api-key` flag, then the file, then the env var.
 
-### 2. Install the Kirha skill in your editor (optional)
+### 2. Install the KIRHA skill in your editor (optional)
 
-If you're using Claude Code, Cursor, Codex, Cline, or any other agent with skill support, install the Kirha skill so your agent can query Kirha directly inside your sessions:
+If you're using Claude Code, Cursor, Codex, Cline, or any other agent with skill support, install the KIRHA skill so your agent can query KIRHA directly inside your sessions:
 
 ```bash
 kirha skills install                              # auto-detect installed agents
@@ -72,74 +72,50 @@ Valid agent ids come from [skills.sh](https://skills.sh). Anything listed there 
 ### 3. Run your first search
 
 ```bash
-kirha search "What's the largest USDC holder on Base?" --vertical crypto
-```
-
-If you're going to use the same vertical a lot, save it as a default so you don't have to repeat it every time:
-
-```bash
-kirha config set vertical crypto
-kirha search "What's the largest USDC holder on Base?"
+kirha search "What does the boxed warning on Ozempic say?"
 ```
 
 ## What you can do
 
-Everything below assumes you've set a default vertical. If not, add `--vertical <id>` to the command.
-
 **Search:**
 
 ```bash
-kirha search "Top 5 ETH validators by stake"
+kirha search "Summarize latest NVIDIA earning calls"
 
-# With a summary instead of just raw data (defaults to kirha-flash)
+# With a summary instead of just raw data
 kirha search "..." --summarize
-
-# Or pick the model explicitly
-kirha search "..." --summarize kirha
 
 # Custom summary instructions
 kirha search "..." --summarize --instruction "Format as a markdown table"
 
+# Focus on one vertical
+kirha search "List top 10 stablecoins yield on Ethereum" --focus crypto
+
 # Pick a planning runtime (default: fast)
-kirha search "..." --runtime standard         # standard | fast | deterministic
+kirha search "..." --runtime standard         # standard | fast
 ```
 
-The planning runtime controls how Kirha plans your query. `fast` is the default and is what you want most of the time. Save a different default with `kirha config set runtime standard`, or set `KIRHA_RUNTIME` in your env.
+Without `--focus`, KIRHA searches every vertical. `standard` is more accurate, `fast` answers sooner. Save defaults with `kirha config set focus crypto` or `kirha config set runtime standard`, or set `KIRHA_FOCUS` and `KIRHA_RUNTIME` in your env.
 
-**Preview a query before running it.** `plan create` shows you the steps Kirha will take and the estimated credit cost. Useful before kicking off something expensive. When you're happy, `plan exec` runs the exact plan you previewed:
+**Preview a query before running it.** `plan create` shows you the steps KIRHA will take and the estimated credit cost. Useful before kicking off something expensive. When you're happy, `plan exec` runs the exact plan you previewed:
 
 ```bash
-kirha plan create "Compare ETH vs Base trading volume"
-# → { "id": "plan_...", "steps": [...], "usage": {...} }
+kirha plan create "Find engineers working at companies behind the latest patents in Machine Learning"
+# → { "id": "search_...", "steps": [...], "usage": {...} }
 
-kirha plan exec plan_abc123
+kirha plan exec search_abc123
 # → the final SearchResult
 ```
 
-**Long-running research tasks.** These can take a few minutes. `task run` creates the task and waits for it; `task create` kicks it off and returns an id you can poll later:
+**Call a single KIRHA tool directly,** if you know the one you want:
 
 ```bash
-# One-shot: kick it off and wait
-kirha task run "Compare the AI strategies of Google, Microsoft, and Meta"
-
-# Or fire-and-forget, come back later
-kirha task create "Compare the AI strategies..."
-# → { "id": "tsk_..." }
-
-kirha task status tsk_abc123    # check progress
-kirha task wait tsk_abc123      # block until done
-kirha task result tsk_abc123    # fetch the final result
-```
-
-**Call a single Kirha tool directly,** if you know the one you want:
-
-```bash
-kirha tools list
+kirha tools list --focus crypto
 kirha tools run zerion_getEthereumWalletProfitAndLoss \
   --input '{"currency":"usd","ethereumAddress":"0x..."}'
 ```
 
-**Browse what Kirha offers:** verticals, providers, and the tools they expose. `discovery` prints markdown straight from [discovery.kirha.com](https://discovery.kirha.com), so it's just as useful for you as it is for an LLM piping it around:
+**Browse what KIRHA offers:** verticals, providers, and the tools they expose. `discovery` prints markdown straight from [discovery.kirha.com](https://discovery.kirha.com), so it's just as useful for you as it is for an LLM piping it around:
 
 ```bash
 kirha discovery home                    # overview
@@ -162,7 +138,7 @@ Run `kirha --help` (or `kirha <command> --help`) to see every flag.
 The CLI prints JSON, one line per invocation, so you can pipe it into `jq` or whatever else:
 
 ```bash
-kirha search "Top 5 ETH validators" | jq '.summary'
+kirha search "Summarize latest NVIDIA earning calls" --summarize | jq '.summary'
 ```
 
 Errors come out on stderr in a stable shape:
@@ -173,9 +149,9 @@ Errors come out on stderr in a stable shape:
 
 Exit codes are predictable: `0` for success, `2` for bad usage, `3` for auth issues, `4` for rate limits, `5` for network errors, `6` for an expired plan.
 
-## Wire Kirha into your AI coding tools
+## Wire KIRHA into your AI coding tools
 
-Install the Kirha MCP server into Claude Code, Codex, OpenCode, Gemini CLI, or Droid with one command:
+Install the KIRHA MCP server into Claude Code, Codex, OpenCode, Gemini CLI, or Droid with one command:
 
 ```bash
 kirha mcp install            # interactive picker, pick one or more with space/enter

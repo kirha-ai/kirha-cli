@@ -1,22 +1,27 @@
 import type { Command } from "commander";
 import { buildClient, type GlobalOptions } from "../lib/client.ts";
+import { DEFAULT_PLANNING_RUNTIME, PLANNING_RUNTIMES, resolveRuntime } from "../lib/config.ts";
 import { emit, resolveQuery } from "../lib/output.ts";
 
 export function registerPlan(program: Command): void {
-  const plan = program.command("plan").description("Preview and execute Kirha plans");
+  const plan = program.command("plan").description("Preview and execute KIRHA plans");
 
   plan
     .command("create [query]")
     .description("Create and preview a plan (steps + estimated cost, no execution)")
-    .action(async (query: string | undefined, _flags: unknown, cmd: Command) => {
+    .option(
+      "--runtime <runtime>",
+      `Planning runtime (${PLANNING_RUNTIMES.join(" | ")}, default: ${DEFAULT_PLANNING_RUNTIME})`,
+    )
+    .action(async (query: string | undefined, flags: { runtime?: string }, cmd: Command) => {
       const globals = cmd.optsWithGlobals() as GlobalOptions;
       const text = await resolveQuery(query);
       const { client } = buildClient(globals);
-      const result = await client.plan(text);
+      const result = await client.plan(text, { planningRuntime: resolveRuntime(flags.runtime) });
       emit({
         id: result.id,
         query: result.query,
-        vertical: result.vertical,
+        focus: result.focus,
         status: result.status,
         steps: result.steps,
         reason: result.reason,

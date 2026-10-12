@@ -94,7 +94,7 @@ function parseClients(raw: string | undefined): ClientId[] | null {
 async function promptForClients(subcommand: McpSubcommand): Promise<ClientId[]> {
   const participle = SUBCOMMAND_CONFIG[subcommand].participle;
   const selected = await promptMultiSelect<ClientId>({
-    message: `Which clients should Kirha be ${participle} for?`,
+    message: `Which clients should KIRHA be ${participle} for?`,
     items: SUPPORTED_CLIENTS.map((c) => ({ label: c.label, value: c.id })),
     minSelected: 1,
   });
@@ -216,13 +216,13 @@ async function runSubcommand(
 export function registerMcp(program: Command): void {
   const mcp = program
     .command("mcp")
-    .description("Install the Kirha MCP server into AI coding clients");
+    .description("Install the KIRHA MCP server into AI coding clients");
 
   const allowedClients = `${SUPPORTED_CLIENTS.map((c) => c.id).join(" | ")} | all`;
 
   mcp
     .command("install")
-    .description("Install Kirha MCP into one or more clients")
+    .description("Install KIRHA MCP into one or more clients")
     .option("-c, --client <names>", `Client(s) to install for (${allowedClients})`)
     .option("-k, --key <apiKey>", "API key to store in the client config (defaults to your auth)")
     .option("--config-path <path>", "Custom configuration file path")
@@ -244,7 +244,7 @@ export function registerMcp(program: Command): void {
 
   mcp
     .command("remove")
-    .description("Remove Kirha MCP from one or more clients")
+    .description("Remove KIRHA MCP from one or more clients")
     .option("-c, --client <names>", `Client(s) to remove from (${allowedClients})`)
     .option("--config-path <path>", "Custom configuration file path")
     .option("--dry-run", "Show what would change without applying it")
