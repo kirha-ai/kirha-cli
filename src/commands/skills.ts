@@ -36,11 +36,11 @@ function runSkillsAdd(args: string[]): Promise<number> {
 export function registerSkills(program: Command): void {
   const skills = program
     .command("skills")
-    .description("Install Kirha skills into AI coding agents");
+    .description("Install KIRHA skills into AI coding agents");
 
   skills
     .command("install")
-    .description(`Install Kirha skills from ${SKILLS_REPO}`)
+    .description(`Install KIRHA skills from ${SKILLS_REPO}`)
     .option(
       "-a, --agent <names>",
       "Target agents, comma-separated (e.g. claude-code,cursor). Omit to auto-detect or pick interactively.",

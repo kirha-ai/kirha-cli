@@ -1,4 +1,4 @@
-import { Command, CommanderError } from "commander";
+import { Command, CommanderError, Option } from "commander";
 import pkg from "../package.json" with { type: "json" };
 import { registerAuth } from "./commands/auth.ts";
 import { registerConfig } from "./commands/config.ts";
@@ -7,7 +7,6 @@ import { registerMcp } from "./commands/mcp.ts";
 import { registerPlan } from "./commands/plan.ts";
 import { registerSearch } from "./commands/search.ts";
 import { registerSkills } from "./commands/skills.ts";
-import { registerTask } from "./commands/task.ts";
 import { registerTools } from "./commands/tools.ts";
 import { registerUpgrade } from "./commands/upgrade.ts";
 import { fail } from "./lib/output.ts";
@@ -19,10 +18,11 @@ export async function run(argv: string[]): Promise<void> {
 
   program
     .name("kirha")
-    .description("Run Kirha from your terminal.")
+    .description("Run KIRHA from your terminal.")
     .version(pkg.version)
     .option("--api-key <key>", "Override the API key for this invocation")
-    .option("--vertical <id>", "Override the vertical for this invocation")
+    .option("--focus <slug>", "Vertical to focus on (crypto, insurance, company, ...)")
+    .addOption(new Option("--vertical <slug>").hideHelp())
     .showHelpAfterError()
     .configureOutput({
       writeOut: (str) => process.stdout.write(str),
@@ -35,7 +35,6 @@ export async function run(argv: string[]): Promise<void> {
   registerDiscovery(program);
   registerSearch(program);
   registerPlan(program);
-  registerTask(program);
   registerTools(program);
   registerMcp(program);
   registerSkills(program);

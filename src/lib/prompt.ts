@@ -23,7 +23,7 @@ export async function promptApiKey(): Promise<string | null> {
 
   const stderr = process.stderr;
   stderr.write("\n");
-  stderr.write("  Get your Kirha API key here:\n");
+  stderr.write("  Get your KIRHA API key here:\n");
   stderr.write(`  ${API_KEYS_URL}\n`);
   stderr.write("\n");
   stderr.write("  Paste your API key: ");

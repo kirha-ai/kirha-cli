@@ -17,7 +17,7 @@ function writeMarkdown(body: string): void {
 export function registerDiscovery(program: Command): void {
   const discovery = program
     .command("discovery")
-    .description("Explore Kirha verticals, providers, and tools");
+    .description("Explore KIRHA verticals, providers, and tools");
 
   discovery
     .command("home")
@@ -26,7 +26,7 @@ export function registerDiscovery(program: Command): void {
       writeMarkdown(await fetchMdx("/home.mdx"));
     });
 
-  const verticals = discovery.command("verticals").description("Browse Kirha verticals");
+  const verticals = discovery.command("verticals").description("Browse KIRHA verticals");
 
   verticals
     .command("list")
@@ -42,7 +42,7 @@ export function registerDiscovery(program: Command): void {
       writeMarkdown(await fetchMdx(`/verticals/${encodeURIComponent(slug)}.mdx`));
     });
 
-  const providers = discovery.command("providers").description("Browse Kirha providers");
+  const providers = discovery.command("providers").description("Browse KIRHA providers");
 
   providers
     .command("list")

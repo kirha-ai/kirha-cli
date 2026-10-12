@@ -6,7 +6,7 @@ import { emit, readStdin } from "../lib/output.ts";
 import { promptApiKey } from "../lib/prompt.ts";
 
 export function registerAuth(program: Command): void {
-  const auth = program.command("auth").description("Manage Kirha credentials");
+  const auth = program.command("auth").description("Manage KIRHA credentials");
 
   auth
     .command("login")

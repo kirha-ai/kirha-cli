@@ -8,21 +8,21 @@ interface RunFlags {
 }
 
 export function registerTools(program: Command): void {
-  const tools = program.command("tools").description("Inspect and run Kirha tools");
+  const tools = program.command("tools").description("Inspect and run KIRHA tools");
 
   tools
     .command("list")
     .description("List available tools for a vertical")
     .action(async (_flags: unknown, cmd: Command) => {
       const globals = cmd.optsWithGlobals() as GlobalOptions;
-      const { client, vertical } = buildClient(globals);
-      if (!vertical) {
+      const { client, focus } = buildClient(globals);
+      if (!focus) {
         throw new CliError(
           "USAGE",
-          "vertical required (use --vertical, KIRHA_VERTICAL, or `kirha config set vertical <id>`)",
+          "focus required (use --focus, KIRHA_FOCUS, or `kirha config set focus <slug>`)",
         );
       }
-      const list = await client.tools({ vertical });
+      const list = await client.tools({ focus });
       emit(list);
     });
 
