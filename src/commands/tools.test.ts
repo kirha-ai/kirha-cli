@@ -45,6 +45,11 @@ describe("renderTable", () => {
       expect(line.length).toBeLessThanOrEqual(60);
     }
   });
+
+  test("keeps descriptions whole at unbounded width", () => {
+    const long = [tool({ name: "a_b", provider: "a", description: "x".repeat(400) })];
+    expect(renderTable(long, true, Number.POSITIVE_INFINITY)).toContain("x".repeat(400));
+  });
 });
 
 describe("renderFooter", () => {
@@ -113,6 +118,12 @@ describe("renderMatch", () => {
     expect(renderMatch([ranked, crossed], 100)).toContain(
       "← openfda_searchDrugRecalls, rxnorm_findDrugByName",
     );
+  });
+
+  test("keeps descriptions whole at unbounded width", () => {
+    const long = tool({ name: "a_b", provider: "a", description: "x".repeat(400) });
+    expect(renderMatch([long], Number.POSITIVE_INFINITY)).toContain("x".repeat(400));
+    expect(renderMatch([long], 60)).not.toContain("x".repeat(400));
   });
 
   test("omits the related heading when nothing was expanded", () => {

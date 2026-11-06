@@ -7,18 +7,22 @@ import { emit, parseJsonArg, readStdin } from "../lib/output.ts";
 const PAGE_SIZE = 20;
 const MIN_DESCRIPTION_WIDTH = 24;
 const MAX_PROSE_WIDTH = 80;
+const FULL_DESCRIPTION_HELP =
+  "Print descriptions in full instead of truncating them to the terminal width (always on when the output is not a terminal)";
 
 interface ListFlags {
   provider?: string;
   page?: number;
   limit?: number;
   expand?: boolean;
+  fullDescription?: boolean;
   json?: boolean;
 }
 
 interface MatchFlags {
   limit?: number;
   expand?: boolean;
+  fullDescription?: boolean;
   json?: boolean;
 }
 
@@ -27,7 +31,8 @@ interface RunFlags {
   json?: boolean;
 }
 
-function terminalWidth(): number {
+function terminalWidth(full = false): number {
+  if (full || !process.stdout.isTTY) return Number.POSITIVE_INFINITY;
   return process.stdout.columns ?? 100;
 }
 
@@ -242,6 +247,7 @@ export function registerTools(program: Command): void {
     .option("--page <n>", "Page to fetch (1-1000)", positiveInt("page"))
     .option("--limit <n>", "Tools per page (1-100)", positiveInt("limit"))
     .option("--expand", "Print each tool with its input and output schema")
+    .option("--full-description", FULL_DESCRIPTION_HELP)
     .option("--json", "Print the raw API response")
     .action(async (flags: ListFlags, cmd: Command) => {
       const globals = cmd.optsWithGlobals() as GlobalOptions;
@@ -260,7 +266,7 @@ export function registerTools(program: Command): void {
 
       const paged = flags.page !== undefined || flags.limit !== undefined;
       const shown = paged ? page.tools : page.tools.slice(0, PAGE_SIZE);
-      const width = terminalWidth();
+      const width = terminalWidth(flags.fullDescription);
       const body = flags.expand
         ? renderExpanded(shown, width)
         : renderTable(shown, flags.provider === undefined, width);
@@ -306,6 +312,7 @@ export function registerTools(program: Command): void {
     .description("Rank the catalogue against an intent in plain language")
     .option("--limit <n>", "Ranked tools to return (1-50, default 10)", positiveInt("limit"))
     .option("--expand", "Print each tool with its input and output schema")
+    .option("--full-description", FULL_DESCRIPTION_HELP)
     .option("--json", "Print the raw API response")
     .action(async (intent: string, flags: MatchFlags, cmd: Command) => {
       if (!intent.trim()) {
@@ -320,7 +327,7 @@ export function registerTools(program: Command): void {
         return;
       }
 
-      const width = terminalWidth();
+      const width = terminalWidth(flags.fullDescription);
       print(flags.expand ? renderExpanded(page.tools, width) : renderMatch(page.tools, width));
     });
 

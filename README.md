@@ -121,6 +121,8 @@ kirha tools run zerion_getEthereumWalletProfitAndLoss \
 
 `list`, `match` and `get` print columns for people and take `--json` for scripts. `--expand` swaps the table for one block per tool with its input and output schema.
 
+In a terminal, `list` and `match` cut descriptions to the width they have. Redirect or pipe them and the descriptions come out whole, so `grep` sees every word; `--full-description` gets you the same in a terminal.
+
 **Browse what KIRHA offers:** verticals, providers, and the tools they expose. `discovery` prints markdown straight from [discovery.kirha.com](https://discovery.kirha.com), so it's just as useful for you as it is for an LLM piping it around:
 
 ```bash
