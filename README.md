@@ -112,7 +112,7 @@ kirha plan exec search_abc123
 ```bash
 kirha tools list                        # the catalogue, 20 at a time
 kirha tools list --provider pubmed      # one provider
-kirha tools match "who holds this token"  # rank the catalogue against an intent
+kirha tools match "token holder"  # rank the catalogue against an intent
 kirha tools get pubmed_searchPubmed     # schemas, cost, sibling tools
 
 kirha tools run zerion_getEthereumWalletProfitAndLoss \
