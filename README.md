@@ -107,13 +107,21 @@ kirha plan exec search_abc123
 # → the final SearchResult
 ```
 
-**Call a single KIRHA tool directly,** if you know the one you want:
+**Browse the tool catalogue and call a single tool directly.** Listing, matching and reading a tool are free; only `run` spends credits:
 
 ```bash
-kirha tools list --focus crypto
+kirha tools list                        # the catalogue, 20 at a time
+kirha tools list --provider pubmed      # one provider
+kirha tools match "token holder"  # rank the catalogue against an intent
+kirha tools get pubmed_searchPubmed     # schemas, cost, sibling tools
+
 kirha tools run zerion_getEthereumWalletProfitAndLoss \
   --input '{"currency":"usd","ethereumAddress":"0x..."}'
 ```
+
+`list`, `match` and `get` print columns for people and take `--json` for scripts. `--expand` swaps the table for one block per tool with its input and output schema.
+
+In a terminal, `list` and `match` cut descriptions to the width they have. Redirect or pipe them and the descriptions come out whole, so `grep` sees every word; `--full-description` gets you the same in a terminal.
 
 **Browse what KIRHA offers:** verticals, providers, and the tools they expose. `discovery` prints markdown straight from [discovery.kirha.com](https://discovery.kirha.com), so it's just as useful for you as it is for an LLM piping it around:
 
