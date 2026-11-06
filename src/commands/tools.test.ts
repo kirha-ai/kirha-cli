@@ -98,9 +98,21 @@ describe("renderMatch", () => {
     const out = renderMatch(tools, 100);
     expect(out).toContain("Ranked");
     expect(out).toContain("Related — surfaced by the picks above");
-    expect(out).toContain("← getSparkTokenHolders");
+    expect(out).toContain("← xverse_getSparkTokenHolders");
     expect(out).toContain("2 cr");
     expect(out).toContain("free");
+  });
+
+  test("names a source from another provider in full", () => {
+    const crossed = tool({
+      name: "rxnorm_getConceptProperties",
+      provider: "rxnorm",
+      related: true,
+      relatedTo: ["openfda_searchDrugRecalls", "rxnorm_findDrugByName"],
+    });
+    expect(renderMatch([ranked, crossed], 100)).toContain(
+      "← openfda_searchDrugRecalls, rxnorm_findDrugByName",
+    );
   });
 
   test("omits the related heading when nothing was expanded", () => {

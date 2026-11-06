@@ -157,10 +157,6 @@ export function renderFooter(
   return `Showing ${first}-${last} of ${page.total} · ${details}`;
 }
 
-function sourceOf(relatedTo: string[]): string {
-  return relatedTo.map((name) => name.split("_").slice(1).join("_") || name).join(", ");
-}
-
 export function renderMatch(tools: Tool[], width: number): string {
   const ranked = tools.filter((tool) => !tool.related);
   const related = tools.filter((tool) => tool.related);
@@ -196,7 +192,7 @@ export function renderMatch(tools: Tool[], width: number): string {
     sections.push(
       [
         "Related — surfaced by the picks above",
-        ...related.map((tool) => row(tool, `← ${sourceOf(tool.relatedTo)}`)),
+        ...related.map((tool) => row(tool, `← ${tool.relatedTo.join(", ")}`)),
       ].join("\n"),
     );
   }
