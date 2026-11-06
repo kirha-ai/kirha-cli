@@ -1,4 +1,5 @@
 import {
+  ApiError,
   AuthenticationError,
   ConfigurationError,
   KirhaError,
@@ -71,6 +72,9 @@ export function formatError(err: unknown): FormattedError {
   }
   if (err instanceof ConfigurationError) {
     return { code: "CONFIG_INVALID", message: err.message };
+  }
+  if (err instanceof ApiError && (err.statusCode === 400 || err.statusCode === 404)) {
+    return { code: "VALIDATION", message: err.message };
   }
   if (err instanceof KirhaError) {
     return { code: "API_ERROR", message: err.message };

@@ -21,6 +21,7 @@ jobs:
             ${{ runner.os }}-bun-
       - run: bun install --frozen-lockfile
       - run: bun run typecheck
+      - run: bun run test
       - run: bun run lint
       - run: bun run build
       - run: node dist/kirha.js --help

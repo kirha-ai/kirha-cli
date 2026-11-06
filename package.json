@@ -19,6 +19,7 @@
     "build:binary:darwin-x64": "bun build ./src/main.ts --compile --target=bun-darwin-x64 --outfile dist/binaries/kirha-darwin-x64",
     "build:binary:linux-x64": "bun build ./src/main.ts --compile --target=bun-linux-x64 --outfile dist/binaries/kirha-linux-x64",
     "build:binary:linux-arm64": "bun build ./src/main.ts --compile --target=bun-linux-arm64 --outfile dist/binaries/kirha-linux-arm64",
+    "test": "bun test",
     "typecheck": "tsc --noEmit",
     "lint": "biome check --write",
     "prepare": "simple-git-hooks || true",
@@ -48,7 +49,7 @@
     "@biomejs/biome": "2.5.15",
     "@types/bun": "^1.4.3",
     "commander": "^15.0.0",
-    "kirha": "^0.2.0",
+    "kirha": "0.2.1",
     "lint-staged": "^17.6.0",
     "simple-git-hooks": "^2.14.0",
     "typescript": "^7.0.2"
