@@ -123,14 +123,15 @@ kirha tools run zerion_getEthereumWalletProfitAndLoss \
 
 In a terminal, `list` and `match` cut descriptions to the width they have. Redirect or pipe them and the descriptions come out whole, so `grep` sees every word; `--full-description` gets you the same in a terminal.
 
-**Browse what KIRHA offers:** verticals, providers, and the tools they expose. `discovery` prints markdown straight from [discovery.kirha.com](https://discovery.kirha.com), so it's just as useful for you as it is for an LLM piping it around:
+**Browse what KIRHA offers:** verticals, providers, and the tools they expose. `discovery` prints markdown straight from the catalogue on [kirha.com](https://kirha.com/providers.md), so it's just as useful for you as it is for an LLM piping it around:
 
 ```bash
-kirha discovery home                    # overview
-kirha discovery verticals list          # every vertical
-kirha discovery verticals get crypto    # details for one
-kirha discovery providers list          # every provider
-kirha discovery providers get zerion    # details for one
+kirha discovery home                      # overview
+kirha discovery verticals list            # every vertical
+kirha discovery verticals get crypto      # details for one
+kirha discovery providers list            # providers, 50 per page
+kirha discovery providers list --page 2   # the next 50
+kirha discovery providers get zerion      # details for one
 ```
 
 You can pipe queries in too, which is handy in scripts:
