@@ -1,10 +1,18 @@
 import type { Command } from "commander";
 import { fetchOk, METADATA_TIMEOUT_MS } from "../lib/download.ts";
+import { positiveInt } from "./tools.ts";
 
-const DISCOVERY_BASE = "https://discovery.kirha.com";
+const CATALOGUE_BASE = "https://kirha.com";
 
-async function fetchMdx(path: string): Promise<string> {
-  const res = await fetchOk(`${DISCOVERY_BASE}${path}?cli=true`, METADATA_TIMEOUT_MS, {
+export function catalogueUrl(path: string, page?: number): string {
+  const url = new URL(path, CATALOGUE_BASE);
+  url.searchParams.set("cli", "1");
+  if (page !== undefined) url.searchParams.set("page", String(page));
+  return url.toString();
+}
+
+async function fetchMarkdown(path: string, page?: number): Promise<string> {
+  const res = await fetchOk(catalogueUrl(path, page), METADATA_TIMEOUT_MS, {
     headers: { Accept: "text/markdown, text/plain, */*" },
   });
   return await res.text();
@@ -21,9 +29,9 @@ export function registerDiscovery(program: Command): void {
 
   discovery
     .command("home")
-    .description("Show the discovery home page")
+    .description("Show the catalogue overview")
     .action(async () => {
-      writeMarkdown(await fetchMdx("/home.mdx"));
+      writeMarkdown(await fetchMarkdown("/providers.md"));
     });
 
   const verticals = discovery.command("verticals").description("Browse KIRHA verticals");
@@ -32,29 +40,30 @@ export function registerDiscovery(program: Command): void {
     .command("list")
     .description("List available verticals")
     .action(async () => {
-      writeMarkdown(await fetchMdx("/verticals/list.mdx"));
+      writeMarkdown(await fetchMarkdown("/verticals.md"));
     });
 
   verticals
     .command("get <slug>")
     .description("Show details for a specific vertical")
     .action(async (slug: string) => {
-      writeMarkdown(await fetchMdx(`/verticals/${encodeURIComponent(slug)}.mdx`));
+      writeMarkdown(await fetchMarkdown(`/verticals/${encodeURIComponent(slug)}.md`));
     });
 
   const providers = discovery.command("providers").description("Browse KIRHA providers");
 
   providers
     .command("list")
-    .description("List available providers")
-    .action(async () => {
-      writeMarkdown(await fetchMdx("/providers/list.mdx"));
+    .description("List available providers, 50 per page")
+    .option("--page <n>", "Page to fetch", positiveInt("page"))
+    .action(async (flags: { page?: number }) => {
+      writeMarkdown(await fetchMarkdown("/providers.md", flags.page));
     });
 
   providers
     .command("get <slug>")
     .description("Show details for a specific provider")
     .action(async (slug: string) => {
-      writeMarkdown(await fetchMdx(`/providers/${encodeURIComponent(slug)}.mdx`));
+      writeMarkdown(await fetchMarkdown(`/providers/${encodeURIComponent(slug)}.md`));
     });
 }

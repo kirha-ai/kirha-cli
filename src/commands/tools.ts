@@ -36,7 +36,7 @@ function terminalWidth(full = false): number {
   return process.stdout.columns ?? 100;
 }
 
-function positiveInt(flag: string) {
+export function positiveInt(flag: string) {
   return (value: string): number => {
     const parsed = Number(value);
     if (!Number.isInteger(parsed) || parsed < 1) {
